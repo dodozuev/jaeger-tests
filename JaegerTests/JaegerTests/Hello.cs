@@ -22,17 +22,36 @@ namespace JaegerTests
 
 		public void SayHello(string helloTo)
 		{
-			var span = _tracer.BuildSpan("say-hello").Start();
+			using var scope = _tracer.BuildSpan("say-hello").StartActive(true);
+			scope.Span.SetTag("hello-to", helloTo);
+
+			var helloString = FormatString(helloTo);
+			PrintHello(helloString);
+		}
+
+		private string FormatString(string helloTo)
+		{
+//			var span = _tracer.BuildSpan("format-string").AsChildOf(rootSpan).Start();
+			using var scope = _tracer.BuildSpan("say-hello").StartActive(true);
+
 			var helloString = $"Hello, {helloTo}!";
-			span.Log(new Dictionary<string, object>
-				{
-					[LogFields.Event] = "string.Format",
-					["value"] = helloString
-				}
-			);
+			scope.Span.Log(new Dictionary<string, object>
+			{
+				[LogFields.Event] = "string.Format",
+				["value"] = helloString
+			});
+			return helloString;
+		}
+
+		private void PrintHello(string helloString)
+		{
+			using var scope = _tracer.BuildSpan("print-hello").StartActive(true);
+
 			_logger.LogInformation(helloString);
-			span.Log("WriteLine");
-			span.Finish();
+			scope.Span.Log(new Dictionary<string, object>
+			{
+				[LogFields.Event] = "WriteLine"
+			});
 		}
 
 		public static void Main(string[] args)
