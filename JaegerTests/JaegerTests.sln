@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaegerTests", "JaegerTests\JaegerTests.csproj", "{9C9987A7-A751-4C27-8FF0-C9745153A210}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaegerTestClient", "JaegerTestClient\JaegerTestClient.csproj", "{C72D38DA-DAFF-4606-976C-CE0DEF525C8C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JaegerTestServer", "JaegerTestServer\JaegerTestServer.csproj", "{F73095A0-6F8E-463E-9A1D-361D28C5B9E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{9C9987A7-A751-4C27-8FF0-C9745153A210}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C9987A7-A751-4C27-8FF0-C9745153A210}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C9987A7-A751-4C27-8FF0-C9745153A210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C72D38DA-DAFF-4606-976C-CE0DEF525C8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C72D38DA-DAFF-4606-976C-CE0DEF525C8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C72D38DA-DAFF-4606-976C-CE0DEF525C8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C72D38DA-DAFF-4606-976C-CE0DEF525C8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F73095A0-6F8E-463E-9A1D-361D28C5B9E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F73095A0-6F8E-463E-9A1D-361D28C5B9E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F73095A0-6F8E-463E-9A1D-361D28C5B9E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F73095A0-6F8E-463E-9A1D-361D28C5B9E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,19 +1,22 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Net;
 using Jaeger;
 using Jaeger.Samplers;
 using Microsoft.Extensions.Logging;
 using OpenTracing;
+using OpenTracing.Propagation;
+using OpenTracing.Tag;
 
-namespace JaegerTests
+namespace JaegerTestClient
 {
-	internal class Hello
+	internal class HelloActive
 	{
 		private readonly ITracer _tracer;
-		private readonly ILogger<Hello> _logger;
+		private readonly ILogger<HelloActive> _logger;
+		private readonly WebClient _webClient = new WebClient();
 
-		public Hello(ITracer tracer, ILogger<Hello> logger)
+		public HelloActive(ITracer tracer, ILogger<HelloActive> logger)
 		{
 			_tracer = tracer;
 			_logger = logger;
@@ -30,15 +33,28 @@ namespace JaegerTests
 
 		private string FormatString(string helloTo)
 		{
-//			var span = _tracer.BuildSpan("format-string").AsChildOf(rootSpan).Start();
-			using var scope = _tracer.BuildSpan("say-hello").StartActive(true);
+			using var scope = _tracer.BuildSpan("format-string").StartActive(true);
+			var url = $"http://localhost:8081/api/format/{helloTo}";
 
-			var helloString = $"Hello, {helloTo}!";
+			var span = scope.Span
+				.SetTag(Tags.SpanKind, Tags.SpanKindClient)
+				.SetTag(Tags.HttpMethod, "GET")
+				.SetTag(Tags.HttpUrl, url);
+
+			var dictionary = new Dictionary<string, string>();
+			_tracer.Inject(span.Context, BuiltinFormats.HttpHeaders, new TextMapInjectAdapter(dictionary));
+
+			foreach (var entry in dictionary)
+				_webClient.Headers.Add(entry.Key, entry.Value);
+
+			var helloString = _webClient.DownloadString(url);
+
 			scope.Span.Log(new Dictionary<string, object>
 			{
 				[LogFields.Event] = "string.Format",
 				["value"] = helloString
 			});
+
 			return helloString;
 		}
 
@@ -62,10 +78,10 @@ namespace JaegerTests
 
 			Console.WriteLine("test");
 			using (var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole()))
-			using (var tracer = InitTracer(nameof(Hello), loggerFactory))
+			using (var tracer = InitTracer(nameof(HelloActive), loggerFactory))
 			{
 				var helloTo = args[0];
-				new Hello(tracer, loggerFactory.CreateLogger<Hello>()).SayHello(helloTo);
+				new HelloActive(tracer, loggerFactory.CreateLogger<HelloActive>()).SayHello(helloTo);
 			}
 		}
 
