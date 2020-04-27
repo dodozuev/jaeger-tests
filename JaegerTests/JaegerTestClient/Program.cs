@@ -22,11 +22,11 @@ namespace JaegerTestClient
 			_logger = logger;
 		}
 
-		public void SayHello(string helloTo)
+		public void SayHello(string helloTo, string greeting)
 		{
 			using var scope = _tracer.BuildSpan("say-hello").StartActive(true);
 			scope.Span.SetTag("hello-to", helloTo);
-
+			scope.Span.SetBaggageItem("greeting", greeting);
 			var helloString = FormatString(helloTo);
 			PrintHello(helloString);
 		}
@@ -71,7 +71,7 @@ namespace JaegerTestClient
 
 		public static void Main(string[] args)
 		{
-			if (args.Length != 1)
+			if (args.Length != 2)
 			{
 				throw new ArgumentException("Expecting one argument");
 			}
@@ -81,7 +81,8 @@ namespace JaegerTestClient
 			using (var tracer = InitTracer(nameof(HelloActive), loggerFactory))
 			{
 				var helloTo = args[0];
-				new HelloActive(tracer, loggerFactory.CreateLogger<HelloActive>()).SayHello(helloTo);
+				var greeting = args[1];
+				new HelloActive(tracer, loggerFactory.CreateLogger<HelloActive>()).SayHello(helloTo, greeting);
 			}
 		}
 

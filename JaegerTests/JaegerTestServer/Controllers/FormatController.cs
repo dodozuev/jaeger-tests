@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,8 +25,10 @@ namespace JaegerTestServer.Controllers
 		[HttpGet("{helloTo}", Name = "GetFormat")]
 		public string Get(string helloTo)
 		{
+			var request = HttpContext.Request;
 			using var scope = _tracer.BuildSpan("format-controller").StartActive();
-			var formattedHelloString = $"Hello, {helloTo}!";
+			var greeting = scope.Span.GetBaggageItem("greeting") ?? "Hello";
+			var formattedHelloString = $"{greeting}, {helloTo}!";
 			scope.Span.Log(new Dictionary<string, object>
 			{
 				[LogFields.Event] = "string-format",
